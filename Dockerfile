@@ -1,14 +1,15 @@
-# Use the official Nginx base image
-FROM nginx:latest
+# Pull base image
+FROM debian:latest
 
-# Copy custom configuration file from the current directory to the container
-COPY nginx.conf /etc/nginx/nginx.conf
+# Dockerfile Maintainer
+MAINTAINER Jan Wagner "waja@cyconet.org"
 
-# Copy static website files to the Nginx web root
-COPY . /usr/share/nginx/html
+# Install nginx and adjust nginx config to stay in foreground
+RUN apt-get update && apt-get install --no-install-recommends -y nginx; \
+ echo "daemon off;" >> /etc/nginx/nginx.conf
 
-# Expose port 80 to the host
+# Expose HTTP
 EXPOSE 80
 
-# Start Nginx when the container launches
-CMD ["nginx", "-g", "daemon off;"]
+# Start nginx
+CMD ["/usr/sbin/nginx"]
