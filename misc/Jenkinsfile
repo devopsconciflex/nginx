@@ -6,11 +6,6 @@ pipeline {
     }
     agent any
     stages {
-        stage('SCM Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/devopsconciflex/nginx.git'
-            }
-        }
         stage('Building image') {
             steps{
                 script {
