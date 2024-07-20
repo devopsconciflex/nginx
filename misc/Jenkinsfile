@@ -1,0 +1,36 @@
+pipeline {
+    environment {
+        registry = "sa-saopaulo-1.ocir.io/gr6ld59swopp/nginx"
+        registryCredential = 'ocir'
+        dockerImage = ''
+    }
+    agent any
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/devopsconciflex/nginx.git'
+            }
+        }
+        stage('Building image') {
+            steps{
+                script {
+                    dockerImage = docker.build(registry + ":${BUILD_NUMBER}")
+                }
+            }
+        }
+        stage('Push to OCIR') {
+            steps {
+                script {
+                    docker.withRegistry( 'https://sa-saopaulo-1.ocir.io', registryCredential ) {
+                    dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Cleanup') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
+    }
+}
